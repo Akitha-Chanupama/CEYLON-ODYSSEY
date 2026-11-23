@@ -63,3 +63,4 @@ button, a, input, select {
 .pb-safe {
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
 }
+

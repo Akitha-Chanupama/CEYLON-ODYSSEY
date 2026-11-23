@@ -49,3 +49,4 @@ export function formatTourDate(isoDate: ISODate): string {
     month: "long",
   }).format(dateObj);
 }
+

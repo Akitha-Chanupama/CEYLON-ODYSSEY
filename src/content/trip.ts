@@ -17,3 +17,4 @@ export const tripConfig: TripConfig = {
     "Travel estimates are realistic planning windows; live routing and conditions confirmed on the road.",
   ],
 };
+

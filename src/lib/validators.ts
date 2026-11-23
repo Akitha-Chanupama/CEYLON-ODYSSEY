@@ -113,3 +113,4 @@ export const TripConfigSchema = z.object({
   confirmedHostContact: z.string().nullable().optional(),
   notes: z.array(z.string()),
 });
+

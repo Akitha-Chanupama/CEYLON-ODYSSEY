@@ -29,3 +29,4 @@
 3. **Seetha Amman Kovil**: Located in Seetha Eliya near **Nuwara Eliya** on Day 5 (25 Dec), NOT on the southern coast.
 4. **Ravana Falls**: Located on the Ella–Wellawaya road descent on Day 6 (26 Dec).
 5. **Rumassala**: Located in Unawatuna/Galle on Day 6 (26 Dec).
+

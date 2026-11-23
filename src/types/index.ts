@@ -111,3 +111,4 @@ export interface TripConfig {
   confirmedHostContact?: string | null;
   notes: string[];
 }
+
