@@ -1,0 +1,18 @@
+{
+  "name": "Discover Sri Lanka — Our Island Journey",
+  "short_name": "Ceylon Odyssey",
+  "description": "A private, mobile-first travel companion for two international guests exploring Sri Lanka and the Ravana Trail.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F4",
+  "theme_color": "#FAF9F4",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/**/*.test.ts",
     "verify-content": "tsx scripts/verify-content.ts"
   },
   "dependencies": {
