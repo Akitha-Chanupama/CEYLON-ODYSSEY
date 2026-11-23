@@ -122,3 +122,4 @@ export const mediaRecords: Record<string, MediaRecord> = {
     creditUrl: "https://unsplash.com",
   },
 };
+

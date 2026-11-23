@@ -684,3 +684,4 @@ export const places: Record<string, PlaceRecord> = {
     lastReviewedAt: "2026-11-23",
   },
 };
+

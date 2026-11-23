@@ -18,3 +18,4 @@ export function getAppleMapsUrl(query: string, lat?: number, lng?: number): stri
   }
   return `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
 }
+

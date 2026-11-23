@@ -58,3 +58,4 @@ export function Badge({ type, label, className = "" }: BadgeProps) {
     </span>
   );
 }
+

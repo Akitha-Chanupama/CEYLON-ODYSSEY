@@ -42,3 +42,4 @@ This document details all operational variables, tentative assumptions, and miss
 - **Sigiriya Rock Climb (Day 2)**: 1,200 steps; check if guests prefer the full summit climb or the level water gardens circuit.
 - **Ravana Cave Hike (Day 5)**: ~650 steep, uneven stairs; conditional on weather and guest mobility. Do not attempt in heavy rain or fading light.
 - **Christmas Day (25 Dec)**: Check local opening hours for Seetha Amman Kovil and Hakgala Botanical Gardens for holiday service schedules.
+

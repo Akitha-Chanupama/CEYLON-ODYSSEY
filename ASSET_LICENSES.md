@@ -20,3 +20,4 @@ All photographic assets incorporated into **Ceylon Odyssey / Discover Sri Lanka*
 | `unawatuna-coast-hero` | Unawatuna bay and beach | Unsplash Free License | Simon Berger | https://unsplash.com |
 | `rumassala-hill-hero` | Rumassala headland and ocean | Unsplash Free License | Sean Oulashin | https://unsplash.com |
 | `galle-fort-hero` | Galle Fort ocean ramparts | Unsplash Free License | Sachith Hettigodage | https://unsplash.com |
+
