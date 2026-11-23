@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --background: #FAF9F4;
+  --surface: #FFFFFF;
+  --surface-soft: #F0F3EE;
+  --foreground: #142B26;
+  --muted-foreground: #4C625A;
+  --primary: #145143;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E3ECE5;
+  --secondary-foreground: #142B26;
+  --accent: #C0914E;
+  --ocean: #235D6C;
+  --border: #D8E2DA;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --shadow-card: 0 8px 28px rgba(12, 36, 27, 0.075);
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Ensure minimum tap targets on mobile controls */
+button, a, input, select {
+  min-height: 44px;
+}
+
+/* Responsive container constraints */
+.mobile-container {
+  width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .mobile-container {
+    max-width: 720px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-container {
+    max-width: 1024px;
+  }
+}
+
+/* Safe Area Insets for modern devices */
+.pb-safe {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
