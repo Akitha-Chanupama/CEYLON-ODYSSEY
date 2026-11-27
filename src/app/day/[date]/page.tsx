@@ -103,9 +103,9 @@ export default async function DayDetailPage({ params }: DayPageProps) {
                     : "Host Reconfirms"
                 }
               />
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/12 border border-white/20 text-[11px] font-medium text-white/95 whitespace-nowrap">
-                <MapPin size={11} className="text-antique-gold-light" />
-                <span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/12 border border-white/20 text-[11px] font-medium text-white/95 max-w-full">
+                <MapPin size={11} className="text-antique-gold-light shrink-0" />
+                <span className="truncate">
                   {currentDay.from} → {currentDay.to}
                 </span>
               </span>
