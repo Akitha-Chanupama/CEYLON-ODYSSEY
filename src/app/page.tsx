@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { MobileHeader } from "@/components/layout/MobileHeader";
 import { HeroFrame } from "@/components/common/HeroFrame";
 import { Badge } from "@/components/common/Badge";
 import { StopTimeline } from "@/components/itinerary/StopTimeline";
@@ -55,8 +54,6 @@ export default function TodayPage() {
 
   return (
     <div className="bg-ivory">
-      <MobileHeader />
-
       <div className="app-container pt-4 pb-10 md:py-8 space-y-6 md:space-y-8 animate-fade-rise">
         {/* Status & Day Selector Bar */}
         <section aria-label="Day selection" className="space-y-3">
