@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { tripConfig } from "../src/content/trip";
 import { days } from "../src/content/days";
 import { places } from "../src/content/places";
@@ -37,7 +39,7 @@ sources.forEach((src) => {
 });
 console.log(`✅ ${sources.length} sources validated.`);
 
-// 3. Validate Media Records
+// 3. Validate Media Records (including file existence & attribution fields)
 const mediaMap = new Set(Object.keys(mediaRecords));
 Object.values(mediaRecords).forEach((med) => {
   const res = MediaRecordSchema.safeParse(med);
@@ -45,8 +47,19 @@ Object.values(mediaRecords).forEach((med) => {
     console.error(`❌ MediaRecord [${med.id}] validation failed:`, res.error.format());
     hasErrors = true;
   }
+  if (!med.credit || !med.license || !med.creditUrl) {
+    console.error(`❌ MediaRecord [${med.id}] missing credit, license, or creditUrl.`);
+    hasErrors = true;
+  }
+  if (med.src.startsWith("/")) {
+    const diskPath = path.join(process.cwd(), "public", med.src.slice(1));
+    if (!fs.existsSync(diskPath)) {
+      console.error(`❌ MediaRecord [${med.id}] local file missing on disk: ${diskPath}`);
+      hasErrors = true;
+    }
+  }
 });
-console.log(`✅ ${Object.keys(mediaRecords).length} media records validated.`);
+console.log(`✅ ${Object.keys(mediaRecords).length} media records and local image files validated.`);
 
 // 4. Validate Places
 const placeKeys = Object.keys(places);
@@ -58,11 +71,17 @@ placeKeys.forEach((key) => {
     hasErrors = true;
   }
 
-  // Cross-reference check: heroMediaId
+  // Cross-reference check: heroMediaId & galleryMediaIds
   if (place.heroMediaId && !mediaMap.has(place.heroMediaId)) {
     console.error(`❌ Place [${key}] references missing heroMediaId: ${place.heroMediaId}`);
     hasErrors = true;
   }
+  place.galleryMediaIds.forEach((mid) => {
+    if (!mediaMap.has(mid)) {
+      console.error(`❌ Place [${key}] references missing galleryMediaId: ${mid}`);
+      hasErrors = true;
+    }
+  });
 
   // Cross-reference check: sourceIds
   place.sourceIds.forEach((srcId) => {
@@ -112,7 +131,6 @@ days.forEach((day) => {
 console.log(`✅ ${days.length} day records and their tour stops validated.`);
 
 // 6. Hard Requirements Sanity Checks
-// - Seetha Amman Kovil must be on Day 5 (2026-12-25) in Nuwara Eliya / Seetha Eliya
 const day5 = days.find((d) => d.date === "2026-12-25");
 const hasSeethaAmmanDay5 = day5?.stops.some((s) => s.placeId === "seetha-amman-kovil");
 if (!hasSeethaAmmanDay5) {
@@ -122,7 +140,6 @@ if (!hasSeethaAmmanDay5) {
   console.log("✅ Verified: Seetha Amman Kovil correctly scheduled on Day 5 (25 Dec).");
 }
 
-// - Ravana Falls must be on Day 6 (2026-12-26)
 const day6 = days.find((d) => d.date === "2026-12-26");
 const hasRavanaFallsDay6 = day6?.stops.some((s) => s.placeId === "ravana-falls");
 const hasRumassalaDay6 = day6?.stops.some((s) => s.placeId === "rumassala");
@@ -139,4 +156,3 @@ if (hasErrors) {
 } else {
   console.log("\n✨ ALL CONTENT INTEGRITY CHECKS PASSED PERFECTLY! ✨");
 }
-

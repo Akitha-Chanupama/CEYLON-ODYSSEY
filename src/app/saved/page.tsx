@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { places } from "@/content/places";
 import { mediaRecords } from "@/content/media";
 import { useBookmarks } from "@/lib/bookmarks";
+import { PlaceImage } from "@/components/common/PlaceImage";
 import { Heart, MapPin, ChevronRight, Compass, Trash2 } from "lucide-react";
 
 export default function SavedPage() {
@@ -64,7 +64,7 @@ export default function SavedPage() {
             {savedPlaces.map((place) => {
               const heroMedia = place.heroMediaId
                 ? mediaRecords[place.heroMediaId]
-                : mediaRecords["hero-sri-lanka"];
+                : null;
 
               return (
                 <div
@@ -72,11 +72,9 @@ export default function SavedPage() {
                   className="bg-white rounded-card overflow-hidden border border-line shadow-card flex items-center gap-3 p-3"
                 >
                   <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-forest-deep">
-                    <Image
-                      src={heroMedia.src}
-                      alt={heroMedia.alt}
-                      fill
-                      className="object-cover"
+                    <PlaceImage
+                      media={heroMedia}
+                      fallbackTitle={place.title}
                       sizes="80px"
                     />
                   </div>

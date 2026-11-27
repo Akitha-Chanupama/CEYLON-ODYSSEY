@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { places } from "@/content/places";
 import { mediaRecords } from "@/content/media";
 import { useBookmarks } from "@/lib/bookmarks";
+import { PlaceImage } from "@/components/common/PlaceImage";
 import {
   Search,
   Sparkles,
@@ -176,7 +176,7 @@ export default function ExplorePage() {
             filteredPlaces.map((place) => {
               const heroMedia = place.heroMediaId
                 ? mediaRecords[place.heroMediaId]
-                : mediaRecords["hero-sri-lanka"];
+                : null;
               const bookmarked = isLoaded && isBookmarked(place.id);
               const isRavanaThemed =
                 place.tags.includes("Ravana Trail") ||
@@ -188,11 +188,9 @@ export default function ExplorePage() {
                   className="bg-white rounded-card overflow-hidden border border-line shadow-card hover:shadow-elevated transition-shadow flex flex-col"
                 >
                   <div className="relative aspect-[16/9] w-full bg-forest-deep">
-                    <Image
-                      src={heroMedia.src}
-                      alt={heroMedia.alt}
-                      fill
-                      className="object-cover"
+                    <PlaceImage
+                      media={heroMedia}
+                      fallbackTitle={place.title}
                       sizes="(max-width: 480px) 100vw, 480px"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/80 via-transparent to-transparent" />
