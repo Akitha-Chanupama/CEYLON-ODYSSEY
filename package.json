@@ -12,6 +12,8 @@
     "verify-content": "tsx scripts/verify-content.ts"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "next": "^15.1.0",
@@ -31,4 +33,3 @@
     "typescript": "^5.7.2"
   }
 }
-

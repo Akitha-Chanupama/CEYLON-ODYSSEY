@@ -1,5 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/600.css";
+import "@fontsource/cormorant-garamond/600-italic.css";
+import "@fontsource/cormorant-garamond/700.css";
+import "@fontsource/plus-jakarta-sans/400.css";
+import "@fontsource/plus-jakarta-sans/500.css";
+import "@fontsource/plus-jakarta-sans/600.css";
+import "@fontsource/plus-jakarta-sans/700.css";
 import { BottomTabBar } from "@/components/layout/BottomTabBar";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { OfflineNotice } from "@/components/common/OfflineNotice";
 import "./globals.css";
 
@@ -33,9 +43,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-ivory text-ink">
-      <body className="min-h-screen flex flex-col bg-ivory antialiased selection:bg-sage selection:text-forest">
+      <body className="min-h-screen flex flex-col bg-ivory font-sans antialiased selection:bg-sage selection:text-forest">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-forest focus:text-white focus:text-xs focus:font-semibold focus:shadow-elevated"
+        >
+          Skip to main content
+        </a>
         <OfflineNotice />
-        <main className="flex-1 pb-safe">{children}</main>
+        <SiteHeader />
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
+        <SiteFooter />
         <BottomTabBar />
       </body>
     </html>

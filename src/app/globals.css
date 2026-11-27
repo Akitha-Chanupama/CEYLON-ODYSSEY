@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --background: #FAF9F4;
   --surface: #FFFFFF;
   --surface-soft: #F0F3EE;
@@ -18,49 +20,127 @@
   --border: #D8E2DA;
   --radius-card: 20px;
   --radius-pill: 999px;
-  --shadow-card: 0 8px 28px rgba(12, 36, 27, 0.075);
+  --shadow-card: 0 8px 28px rgba(12, 36, 27, 0.065);
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
   color: var(--foreground);
   background-color: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Ensure minimum tap targets on mobile controls */
-button, a, input, select {
+/* Intentional touch target classes for controls without inflating inline links */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.tap-row {
   min-height: 44px;
 }
 
-/* Responsive container constraints */
-.mobile-container {
+/* Accessible focus rings */
+:focus-visible {
+  outline: 2px solid #145143;
+  outline-offset: 2px;
+}
+
+/* Responsive layout containers */
+.app-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 1080px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-@media (min-width: 768px) {
+.mobile-container {
+  width: 100%;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.reading-container {
+  width: 100%;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .app-container,
   .mobile-container {
-    max-width: 720px;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
+  .app-container,
   .mobile-container {
-    max-width: 1024px;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
-/* Safe Area Insets for modern devices */
+/* Bottom dock safe clearance on mobile, normal spacing on desktop */
 .pb-safe {
-  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
 }
 
+@media (min-width: 768px) {
+  .pb-safe {
+    padding-bottom: 3rem;
+  }
+}
+
+/* Hide scrollbars cleanly for horizontal pill strips & carousels */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Subtle editorial motion */
+@keyframes fadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-rise {
+  animation: fadeRise 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

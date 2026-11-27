@@ -18,28 +18,37 @@ export function BottomTabBar() {
       label: "Journey",
       href: "/journey",
       icon: MapPin,
-      isActive: pathname.startsWith("/journey") || pathname.startsWith("/day"),
+      isActive:
+        pathname.startsWith("/journey") ||
+        pathname.startsWith("/day") ||
+        pathname.startsWith("/map"),
     },
     {
       label: "Explore",
       href: "/explore",
       icon: Compass,
-      isActive: pathname.startsWith("/explore") || pathname.startsWith("/places") || pathname.startsWith("/ravana-trail"),
+      isActive:
+        pathname.startsWith("/explore") ||
+        pathname.startsWith("/places") ||
+        pathname.startsWith("/ravana-trail"),
     },
     {
       label: "Essentials",
       href: "/essentials",
       icon: BookOpen,
-      isActive: pathname.startsWith("/essentials"),
+      isActive:
+        pathname.startsWith("/essentials") ||
+        pathname.startsWith("/welcome") ||
+        pathname.startsWith("/saved"),
     },
   ];
 
   return (
     <nav
       aria-label="Bottom Navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-line transition-all"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-line/85 shadow-dock pb-[env(safe-area-inset-bottom,0px)]"
     >
-      <div className="max-w-md mx-auto grid grid-cols-4 h-16">
+      <div className="max-w-lg mx-auto grid grid-cols-4 h-16 px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = tab.isActive;
@@ -47,18 +56,19 @@ export function BottomTabBar() {
             <Link
               key={tab.label}
               href={tab.href}
-              className={`flex flex-col items-center justify-center gap-1 transition-colors select-none ${
+              aria-current={active ? "page" : undefined}
+              className={`min-h-[56px] flex flex-col items-center justify-center gap-1 transition-colors select-none ${
                 active ? "text-forest font-semibold" : "text-muted hover:text-ink"
               }`}
             >
               <div
-                className={`p-1 rounded-full transition-transform ${
-                  active ? "bg-sage/70 scale-105" : ""
+                className={`px-3 py-1 rounded-full transition-all ${
+                  active ? "bg-sage/85 scale-[1.03]" : ""
                 }`}
               >
-                <Icon size={20} strokeWidth={active ? 2.3 : 1.8} />
+                <Icon size={20} strokeWidth={active ? 2.25 : 1.8} />
               </div>
-              <span className="text-[11px] tracking-tight">{tab.label}</span>
+              <span className="text-[11px] leading-none tracking-tight">{tab.label}</span>
             </Link>
           );
         })}
