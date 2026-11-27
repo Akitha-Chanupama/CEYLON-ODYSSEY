@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         ink: "#142B26",
+        muted: "#4C625A",
         forest: {
           DEFAULT: "#145143",
           deep: "#0B332C",
@@ -26,6 +27,7 @@ const config: Config = {
         "antique-gold": {
           DEFAULT: "#C0914E",
           light: "#E8BC72",
+          dark: "#7A4B13",
         },
         ocean: "#235D6C",
         clay: "#9B533C",
@@ -41,8 +43,9 @@ const config: Config = {
         pill: "999px",
       },
       boxShadow: {
-        card: "0 8px 28px rgba(12, 36, 27, 0.075)",
-        elevated: "0 12px 32px rgba(12, 36, 27, 0.12)",
+        card: "0 8px 28px rgba(12, 36, 27, 0.065)",
+        elevated: "0 14px 36px rgba(12, 36, 27, 0.11)",
+        dock: "0 -6px 24px rgba(12, 36, 27, 0.06)",
       },
       fontFamily: {
         serif: ["var(--font-serif)", "Georgia", "serif"],
@@ -54,4 +57,3 @@ const config: Config = {
 };
 
 export default config;
-
