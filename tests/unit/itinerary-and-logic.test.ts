@@ -5,6 +5,7 @@ import { tripConfig } from "../../src/content/trip";
 import { days } from "../../src/content/days";
 import { places } from "../../src/content/places";
 import { sources } from "../../src/content/sources";
+import { mediaRecords } from "../../src/content/media";
 import {
   getSriLankaDateString,
   getActiveTourDay,
@@ -162,6 +163,18 @@ describe("Ceylon Odyssey Acceptance Tests", () => {
     assert.equal(tripConfig.confirmedHostContact, null);
     assert.equal(typeof tripConfig.timeZone, "string");
     assert.equal(tripConfig.timeZone, "Asia/Colombo");
+  });
+
+  // UT-13: Local verified media records & attribution
+  test("UT-13: Every media record uses local asset path with complete licensing metadata", () => {
+    const records = Object.values(mediaRecords);
+    assert.equal(records.length, 19);
+    for (const m of records) {
+      assert.ok(m.src.startsWith("/images/places/"), `${m.id} must use local /images/places/ asset`);
+      assert.ok(m.credit.length > 0, `${m.id} must have photographer credit`);
+      assert.ok(m.license.length > 0, `${m.id} must have license`);
+      assert.ok(m.creditUrl && m.creditUrl.startsWith("https://commons.wikimedia.org/"), `${m.id} must link to Commons source`);
+    }
   });
 });
 

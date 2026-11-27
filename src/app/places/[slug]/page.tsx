@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { places } from "@/content/places";
@@ -6,6 +5,7 @@ import { sources } from "@/content/sources";
 import { mediaRecords } from "@/content/media";
 import { getGoogleMapsUrl, getAppleMapsUrl } from "@/lib/navigation";
 import { Badge } from "@/components/common/Badge";
+import { PlaceImage } from "@/components/common/PlaceImage";
 import { SaveButton } from "@/components/place/SaveButton";
 import {
   MapPin,
@@ -41,7 +41,7 @@ export default async function PlaceDetailPage({ params }: PlacePageProps) {
 
   const heroMedia = place.heroMediaId
     ? mediaRecords[place.heroMediaId]
-    : mediaRecords["hero-sri-lanka"];
+    : null;
 
   const isRavanaTrail =
     place.tags.includes("Ravana Trail") ||
@@ -70,12 +70,10 @@ export default async function PlaceDetailPage({ params }: PlacePageProps) {
 
       {/* Hero Media */}
       <div className="relative aspect-[4/3] w-full bg-forest-deep">
-        <Image
-          src={heroMedia.src}
-          alt={heroMedia.alt}
-          fill
+        <PlaceImage
+          media={heroMedia}
+          fallbackTitle={place.title}
           priority
-          className="object-cover"
           sizes="(max-width: 480px) 100vw, 600px"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/40 to-transparent" />
@@ -107,8 +105,28 @@ export default async function PlaceDetailPage({ params }: PlacePageProps) {
 
       {/* Photo credit strip */}
       <div className="bg-sage/40 px-4 py-1.5 text-[10px] text-muted flex items-center justify-between border-b border-line/60">
-        <span>Photo: {heroMedia.credit}</span>
-        <span className="text-forest font-medium">{heroMedia.license}</span>
+        {heroMedia ? (
+          <>
+            <span>Photo: {heroMedia.credit}</span>
+            {heroMedia.creditUrl ? (
+              <a
+                href={heroMedia.creditUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-forest font-medium underline hover:text-forest-light"
+              >
+                {heroMedia.license}
+              </a>
+            ) : (
+              <span className="text-forest font-medium">{heroMedia.license}</span>
+            )}
+          </>
+        ) : (
+          <>
+            <span>Editorial illustration placeholder</span>
+            <span className="text-forest font-medium">Licensed photo pending</span>
+          </>
+        )}
       </div>
 
       <div className="mobile-container py-5 space-y-6">

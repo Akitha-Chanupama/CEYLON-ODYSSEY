@@ -126,7 +126,7 @@ export const days: DayRecord[] = [
     to: "Nuwara Eliya",
     regionLabel: "Central Highlands & Tea Estates",
     teaser: "Climb into misty Ceylon tea country via Ramboda Pass, visiting the sacred Sri Bhakta Hanuman Temple.",
-    heroMediaId: "ramboda-hills-hero",
+    heroMediaId: "ramboda-hanuman-hero",
     estimatedRoadTransfer: "Kandy to Nuwara Eliya via Ramboda (~3–4.5 h driving; hill roads are scenic and winding)",
     overnightLocation: "Nuwara Eliya",
     hotelName: null,
