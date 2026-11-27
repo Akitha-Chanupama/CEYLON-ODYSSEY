@@ -73,19 +73,19 @@ export function HeroFrame({
           {creditPill && <div className="absolute bottom-3 left-3 z-10">{creditPill}</div>}
         </div>
 
-        <div className="p-5 sm:p-7 lg:p-8 md:col-span-5 flex flex-col justify-between gap-5 bg-gradient-to-br from-forest-deep via-forest to-forest-dark">
-          <div className="space-y-3">
+        <div className="p-5 sm:p-7 lg:p-8 md:col-span-5 min-w-0 flex flex-col justify-between gap-5 bg-gradient-to-br from-forest-deep via-forest to-forest-dark">
+          <div className="space-y-3 min-w-0">
             {eyebrow && (
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-antique-gold-light">
                 {eyebrow}
               </p>
             )}
-            {badges && <div className="flex flex-wrap items-center gap-2">{badges}</div>}
-            <h1 className="font-serif text-3xl sm:text-[2.25rem] lg:text-[2.5rem] font-semibold tracking-tight leading-[1.08] text-white">
+            {badges && <div className="flex flex-wrap items-center gap-2 max-w-full">{badges}</div>}
+            <h1 className="font-serif text-3xl sm:text-[2.25rem] lg:text-[2.5rem] font-semibold tracking-tight leading-[1.08] text-white break-words">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-sm sm:text-[15px] text-white/85 leading-relaxed">{subtitle}</p>
+              <p className="text-sm sm:text-[15px] text-white/85 leading-relaxed break-words">{subtitle}</p>
             )}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2.5 pt-1">{actions}</div>}

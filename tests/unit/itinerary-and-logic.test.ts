@@ -12,6 +12,7 @@ import {
   formatTourDate,
 } from "../../src/lib/dates";
 import { getGoogleMapsUrl, getAppleMapsUrl } from "../../src/lib/navigation";
+import { formatPlaceTag, isRavanaPlace } from "../../src/lib/tags";
 import { ISODate } from "../../src/types";
 
 describe("Ceylon Odyssey Acceptance Tests", () => {
@@ -175,6 +176,15 @@ describe("Ceylon Odyssey Acceptance Tests", () => {
       assert.ok(m.license.length > 0, `${m.id} must have license`);
       assert.ok(m.creditUrl && m.creditUrl.startsWith("https://commons.wikimedia.org/"), `${m.id} must link to Commons source`);
     }
+  });
+
+  // UT-14: Tag formatter & Ravana Trail classifier
+  test("UT-14: Formats internal place tags cleanly and detects Ravana Trail landmarks", () => {
+    assert.equal(formatPlaceTag("RAMAYANA_TRADITION"), "Ramayana Tradition");
+    assert.equal(formatPlaceTag("HINDUISM"), "Hindu Kovil");
+    assert.equal(formatPlaceTag("CUSTOM_TAG"), "Custom Tag");
+    assert.equal(isRavanaPlace(["HERITAGE", "RAMAYANA_TRADITION"]), true);
+    assert.equal(isRavanaPlace(["HERITAGE", "UNESCO"]), false);
   });
 });
 

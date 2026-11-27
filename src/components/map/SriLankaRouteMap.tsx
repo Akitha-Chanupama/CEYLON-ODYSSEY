@@ -20,6 +20,7 @@ interface RouteNode {
   y: number;
   dayNumbers: number[];
   anchorAlign?: "left" | "right";
+  yOffset?: number;
 }
 
 const ROUTE_NODES: RouteNode[] = [
@@ -46,7 +47,7 @@ const ROUTE_NODES: RouteNode[] = [
     label: "Matale & Kandy",
     sublabel: "Days 3–4",
     x: 184,
-    y: 234,
+    y: 230,
     dayNumbers: [3, 4],
     anchorAlign: "right",
   },
@@ -55,18 +56,20 @@ const ROUTE_NODES: RouteNode[] = [
     label: "Ramboda & Nuwara Eliya",
     sublabel: "Days 4–5",
     x: 204,
-    y: 274,
+    y: 270,
     dayNumbers: [4, 5],
     anchorAlign: "right",
+    yOffset: -6,
   },
   {
     id: "ella",
     label: "Ella Highlands",
     sublabel: "Days 5–6",
     x: 240,
-    y: 296,
+    y: 304,
     dayNumbers: [5, 6],
     anchorAlign: "right",
+    yOffset: 10,
   },
   {
     id: "coast",
@@ -81,15 +84,15 @@ const ROUTE_NODES: RouteNode[] = [
 
 // Connects chronological island progression across Sri Lanka
 const FULL_ARC_PATH =
-  "M 112 266 Q 138 205 192 172 Q 194 205 184 234 Q 192 256 204 274 Q 222 288 240 296 Q 228 355 158 376 Q 112 342 112 266";
+  "M 112 266 Q 138 205 192 172 Q 194 205 184 230 Q 192 252 204 270 Q 222 288 240 304 Q 228 355 158 376 Q 112 342 112 266";
 
 const DAY_SEGMENTS: Record<number, string> = {
   1: "M 112 266 Q 138 205 192 172",
   2: "M 188 172 L 196 176",
-  3: "M 192 172 Q 194 205 184 234",
-  4: "M 184 234 Q 192 256 204 274",
-  5: "M 204 274 Q 222 288 240 296",
-  6: "M 240 296 Q 228 355 158 376",
+  3: "M 192 172 Q 194 205 184 230",
+  4: "M 184 230 Q 192 252 204 270",
+  5: "M 204 270 Q 222 288 240 304",
+  6: "M 240 304 Q 228 355 158 376",
   7: "M 158 376 Q 112 342 112 266",
 };
 
@@ -166,7 +169,7 @@ export function SriLankaRouteMap({ days, placesMap }: SriLankaRouteMapProps) {
 
           <div className="rounded-2xl bg-gradient-to-b from-[#EAF2F4] to-[#E2ECE9] border border-line/80 p-3 overflow-hidden">
             <svg
-              viewBox="0 0 360 430"
+              viewBox="0 0 390 430"
               role="img"
               aria-label="Stylized schematic map of Sri Lanka highlighting tour regions across Days 1 to 7"
               className="w-full h-auto max-h-[420px]"
@@ -241,6 +244,7 @@ export function SriLankaRouteMap({ days, placesMap }: SriLankaRouteMapProps) {
                   selectedDay === "all" || node.dayNumbers.includes(selectedDay);
                 const labelX = node.anchorAlign === "left" ? node.x - 12 : node.x + 12;
                 const textAnchor = node.anchorAlign === "left" ? "end" : "start";
+                const baseY = node.y + (node.yOffset ?? 0);
 
                 return (
                   <g
@@ -259,7 +263,7 @@ export function SriLankaRouteMap({ days, placesMap }: SriLankaRouteMapProps) {
                     />
                     <text
                       x={labelX}
-                      y={node.y - 2}
+                      y={baseY - 2}
                       textAnchor={textAnchor}
                       className="text-[10.5px] font-bold"
                       fill={isNodeActive ? "#142B26" : "#4C625A"}
@@ -268,7 +272,7 @@ export function SriLankaRouteMap({ days, placesMap }: SriLankaRouteMapProps) {
                     </text>
                     <text
                       x={labelX}
-                      y={node.y + 10}
+                      y={baseY + 10}
                       textAnchor={textAnchor}
                       className="text-[9px] font-medium"
                       fill={isNodeActive ? "#7A4B13" : "#6D7F79"}
