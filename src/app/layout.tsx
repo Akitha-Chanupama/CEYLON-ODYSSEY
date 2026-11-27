@@ -8,6 +8,7 @@ import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 import { BottomTabBar } from "@/components/layout/BottomTabBar";
+import { MobileHeader } from "@/components/layout/MobileHeader";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { OfflineNotice } from "@/components/common/OfflineNotice";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Ceylon Odyssey",
   },
 };
@@ -33,7 +34,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#FAF9F4",
+  themeColor: "#091E1A",
 };
 
 export default function RootLayout({
@@ -51,6 +52,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <OfflineNotice />
+        <MobileHeader />
         <SiteHeader />
         <main id="main-content" className="flex-1">
           {children}
