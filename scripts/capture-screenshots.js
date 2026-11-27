@@ -155,6 +155,8 @@ async function main() {
       { name: "desktop-place-seetha-1440x900", path: "/places/seetha-amman-kovil", width: 1440, height: 900, mobile: false },
       { name: "desktop-map-1440x900", path: "/map", width: 1440, height: 900, mobile: false },
       { name: "desktop-essentials-1440x900", path: "/essentials", width: 1440, height: 900, mobile: false },
+      { name: "desktop-footer-1440x900", path: "/", width: 1440, height: 900, mobile: false, scrollBottom: true },
+      { name: "mobile-footer-390x844", path: "/", width: 390, height: 844, mobile: true, scrollBottom: true },
     ];
 
     for (const t of targets) {
@@ -168,6 +170,13 @@ async function main() {
       const url = `http://127.0.0.1:${PORT}${t.path}`;
       await cdp.send("Page.navigate", { url });
       await new Promise((r) => setTimeout(r, 900));
+
+      if (t.scrollBottom) {
+        await cdp.send("Runtime.evaluate", {
+          expression: "window.scrollTo(0, document.body.scrollHeight);",
+        });
+        await new Promise((r) => setTimeout(r, 250));
+      }
 
       // Wait for fonts + force-load any below-the-fold lazy Next/Image elements before auditing
       const audit = await cdp.send("Runtime.evaluate", {
