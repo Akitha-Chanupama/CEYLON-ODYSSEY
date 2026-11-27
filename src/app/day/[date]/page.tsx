@@ -1,23 +1,20 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { days } from "@/content/days";
 import { places } from "@/content/places";
 import { mediaRecords } from "@/content/media";
 import { formatTourDate } from "@/lib/dates";
-import { getGoogleMapsUrl } from "@/lib/navigation";
+import { HeroFrame } from "@/components/common/HeroFrame";
 import { Badge } from "@/components/common/Badge";
+import { StopTimeline } from "@/components/itinerary/StopTimeline";
 import {
-  MapPin,
-  Clock,
-  Navigation,
+  AlertTriangle,
+  Bed,
   ChevronLeft,
   ChevronRight,
-  AlertTriangle,
-  Sparkles,
   Luggage,
-  Bed,
-  Compass,
+  Map,
+  MapPin,
 } from "lucide-react";
 
 export function generateStaticParams() {
@@ -47,206 +44,171 @@ export default async function DayDetailPage({ params }: DayPageProps) {
     : mediaRecords["hero-sri-lanka"];
 
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Top Bar with back link */}
-      <header className="sticky top-0 z-40 bg-ivory/95 backdrop-blur-md border-b border-line/60 px-4 py-3">
-        <div className="max-w-md mx-auto flex items-center justify-between">
+    <div className="bg-ivory">
+      {/* Mobile-only context bar */}
+      <header className="md:hidden sticky top-0 z-40 bg-ivory/95 backdrop-blur-md border-b border-line/70 px-4 py-2.5">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
           <Link
             href="/journey"
-            className="flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-light"
+            className="tap-row inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-deep"
           >
             <ChevronLeft size={16} />
             <span>All 7 Days</span>
           </Link>
-          <span className="text-xs font-bold uppercase tracking-wider text-antique-gold">
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-antique-gold-dark">
             Day {currentDay.dayNumber} of 7
           </span>
         </div>
       </header>
 
-      {/* Hero Header */}
-      <div className="relative aspect-[16/10] w-full bg-forest-deep">
-        <Image
-          src={heroMedia.src}
-          alt={heroMedia.alt}
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 480px) 100vw, 600px"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/95 via-forest-deep/40 to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white space-y-1.5">
+      <div className="app-container pt-4 pb-10 md:py-8 space-y-8 animate-fade-rise">
+        {/* Desktop Breadcrumb */}
+        <nav
+          aria-label="Breadcrumb"
+          className="hidden md:flex items-center justify-between text-xs text-muted"
+        >
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-antique-gold text-ink text-[11px] font-bold uppercase">
-              Day {currentDay.dayNumber}
-            </span>
-            <span className="text-xs text-ivory/90 font-medium">
-              {formatTourDate(currentDay.date)}
+            <Link href="/journey" className="hover:text-forest font-medium transition-colors">
+              7-Day Journey
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span className="text-ink font-semibold">
+              Day {currentDay.dayNumber} · {formatTourDate(currentDay.date)}
             </span>
           </div>
-          <h1 className="text-2xl font-serif font-bold text-white leading-tight">
-            {currentDay.title}
-          </h1>
-          <p className="text-xs text-ivory/85 flex items-center gap-1 font-medium">
-            <MapPin size={12} className="text-antique-gold shrink-0" />
-            <span>{currentDay.from} → {currentDay.to}</span>
-          </p>
-        </div>
-      </div>
+          <Link
+            href="/map"
+            className="inline-flex items-center gap-1.5 font-semibold text-forest hover:underline"
+          >
+            <Map size={13} />
+            <span>View on Route Map</span>
+          </Link>
+        </nav>
 
-      <div className="mobile-container py-5 space-y-6">
-        {/* Day Teaser */}
-        <section className="bg-white rounded-card p-4 border border-line shadow-card space-y-2">
-          <h2 className="text-sm font-bold text-ink">Day Summary</h2>
-          <p className="text-xs text-ink/80 leading-relaxed">
-            {currentDay.teaser}
-          </p>
-        </section>
+        {/* Split Editorial Hero */}
+        <HeroFrame
+          variant="split"
+          media={heroMedia}
+          fallbackTitle={currentDay.title}
+          eyebrow={`Day ${currentDay.dayNumber} of 7 · ${formatTourDate(currentDay.date)}`}
+          title={currentDay.title}
+          subtitle={currentDay.teaser}
+          badges={
+            <>
+              <Badge
+                type={currentDay.operationalStatus === "verified" ? "verified" : "check-again"}
+                label={
+                  currentDay.operationalStatus === "verified"
+                    ? "Verified Schedule"
+                    : "Host Reconfirms"
+                }
+              />
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/12 border border-white/20 text-[11px] font-medium text-white/95 whitespace-nowrap">
+                <MapPin size={11} className="text-antique-gold-light" />
+                <span>
+                  {currentDay.from} → {currentDay.to}
+                </span>
+              </span>
+            </>
+          }
+          actions={
+            <a
+              href="#tour-sequence"
+              className="tap-row inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-forest text-xs font-semibold shadow-sm hover:bg-sage transition-colors"
+            >
+              <span>Jump to {currentDay.stops.length} Stops</span>
+              <ChevronRight size={14} />
+            </a>
+          }
+        />
 
-        {/* Road Planning Alert */}
-        {currentDay.estimatedRoadTransfer && (
-          <div className="rounded-xl bg-warning-bg/80 p-3.5 border border-[#EED7B0] flex items-start gap-2.5 text-xs text-warning-text leading-relaxed">
-            <AlertTriangle size={16} className="shrink-0 mt-0.5 text-antique-gold" />
-            <div>
-              <span className="font-bold">Road Planning Estimate: </span>
-              {currentDay.estimatedRoadTransfer}
+        {/* Desktop 2-Column Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          {/* Timeline Column */}
+          <section id="tour-sequence" className="lg:col-span-8 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+              <div>
+                <h2 className="font-serif text-2xl sm:text-[28px] font-semibold text-ink tracking-tight">
+                  Tour Sequence ({currentDay.stops.length} Stops)
+                </h2>
+                <p className="text-xs text-muted mt-0.5">
+                  Ordered itinerary for {currentDay.regionLabel}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* Ordered Tour Stops Timeline */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold text-ink tracking-tight">
-              Tour Sequence ({currentDay.stops.length} Stops)
-            </h2>
-            <span className="text-[11px] text-muted">Ordered route</span>
-          </div>
-
-          <div className="space-y-3">
-            {currentDay.stops.map((stop, idx) => {
-              const place = places[stop.placeId];
-              if (!place) return null;
-
-              const isRavanaTrail = place.tags.includes("Ravana Trail") || place.tags.includes("RAMAYANA_TRADITION");
-
-              return (
-                <div
-                  key={stop.id}
-                  className="bg-white rounded-card p-4 border border-line shadow-card space-y-3"
-                >
-                  {/* Stop Header */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2.5">
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-forest text-white text-xs font-bold shrink-0 mt-0.5">
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-ink leading-snug">
-                          {place.title}
-                        </h3>
-                        <p className="text-xs text-muted flex items-center gap-1 mt-0.5">
-                          <Clock size={12} />
-                          <span>
-                            {stop.approximatePartOfDay
-                              ? stop.approximatePartOfDay.toUpperCase()
-                              : "TIME TBC"}
-                          </span>
-                          <span>· {place.region}</span>
-                        </p>
-                      </div>
-                    </div>
-                    <Badge type={stop.priority} />
-                  </div>
-
-                  {/* Ravana theme marker */}
-                  {isRavanaTrail && (
-                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F7EAD7] text-[#7A4B13] text-[11px] font-semibold border border-[#E8D0B1]">
-                      <Sparkles size={11} className="text-antique-gold" />
-                      <span>Ravana & Ramayana Tradition</span>
-                    </div>
-                  )}
-
-                  {/* Stop Intro */}
-                  <p className="text-xs text-ink/80 leading-relaxed">
-                    {place.shortIntro}
-                  </p>
-
-                  {/* Host/Guest Note */}
-                  {stop.guestNote && (
-                    <div className="p-2.5 rounded-lg bg-sage/40 border border-line text-[11px] text-ink/85 italic leading-relaxed">
-                      &ldquo;{stop.guestNote}&rdquo;
-                    </div>
-                  )}
-
-                  {/* Action Links */}
-                  <div className="pt-2 flex items-center justify-between border-t border-line/60">
-                    <Link
-                      href={`/places/${place.slug}`}
-                      className="text-xs font-semibold text-forest hover:text-forest-light flex items-center gap-1 py-1"
-                    >
-                      <span>Read Full Story</span>
-                      <ChevronRight size={14} />
-                    </Link>
-
-                    <a
-                      href={getGoogleMapsUrl(place.mapQuery, place.latitude, place.longitude)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sage/80 hover:bg-sage text-forest text-xs font-semibold transition-colors"
-                    >
-                      <Navigation size={12} />
-                      <span>Directions</span>
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Day Operational Notes & Tips */}
-        {currentDay.notes.length > 0 && (
-          <section className="bg-white rounded-card p-4 border border-line shadow-card space-y-2.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
-              <Luggage size={14} />
-              <span>Prepare for Today</span>
-            </h3>
-            <ul className="space-y-1.5 text-xs text-ink/80 leading-relaxed">
-              {currentDay.notes.map((note, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-antique-gold font-bold">•</span>
-                  <span>{note}</span>
-                </li>
-              ))}
-            </ul>
+            <StopTimeline
+              stops={currentDay.stops}
+              placesMap={places}
+              mediaMap={mediaRecords}
+            />
           </section>
-        )}
 
-        {/* Overnight Base Status */}
-        <section className="bg-white rounded-card p-4 border border-line shadow-card space-y-1.5">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
-            <Bed size={14} />
-            <span>Overnight Base</span>
-          </h3>
-          <p className="text-xs font-semibold text-ink">
-            {currentDay.overnightLocation || "To Confirm"}
-          </p>
-          <p className="text-[11px] text-muted">
-            Hotel confirmation and address will be provided by your host before check-in.
-          </p>
-        </section>
+          {/* Practical Sidebar */}
+          <aside className="lg:col-span-4 space-y-5">
+            {currentDay.estimatedRoadTransfer && (
+              <div className="rounded-card bg-warning-bg/85 p-4 border border-[#EED7B0] flex items-start gap-3 text-xs text-warning-text leading-relaxed shadow-sm">
+                <AlertTriangle size={17} className="shrink-0 mt-0.5 text-antique-gold-dark" />
+                <div>
+                  <p className="font-bold mb-0.5">Road Planning Estimate</p>
+                  <p>{currentDay.estimatedRoadTransfer}</p>
+                </div>
+              </div>
+            )}
 
-        {/* Previous / Next Navigation Controls */}
-        <div className="flex items-center justify-between pt-2 pb-6 border-t border-line">
+            {currentDay.notes.length > 0 && (
+              <section className="bg-white rounded-card p-5 border border-line/90 shadow-card space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
+                  <Luggage size={15} className="text-antique-gold-dark" />
+                  <span>Prepare for Today</span>
+                </h3>
+                <ul className="space-y-2 text-xs text-ink/85 leading-relaxed">
+                  {currentDay.notes.map((note, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-antique-gold-dark font-bold mt-0.5">•</span>
+                      <span>{note}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            <section className="bg-white rounded-card p-5 border border-line/90 shadow-card space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+                <Bed size={15} className="text-forest" />
+                <span>Overnight Base</span>
+              </h3>
+              <p className="font-serif text-xl font-semibold text-ink">
+                {currentDay.overnightLocation || "To Confirm"}
+              </p>
+              <p className="text-xs text-muted leading-relaxed">
+                {currentDay.hotelName
+                  ? currentDay.hotelName
+                  : "Hotel confirmation and check-in details will be shared privately by your accompanying host."}
+              </p>
+            </section>
+          </aside>
+        </div>
+
+        {/* Previous / Next Day Editorial Switcher */}
+        <nav
+          aria-label="Adjacent Tour Days"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-line"
+        >
           {prevDay ? (
             <Link
               href={`/day/${prevDay.date}`}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-light py-2"
+              className="tap-row bg-white rounded-2xl p-4 border border-line/90 hover:border-forest/35 shadow-sm flex items-center gap-3 transition-colors"
             >
-              <ChevronLeft size={16} />
-              <span>Day {prevDay.dayNumber} ({prevDay.date.slice(5)})</span>
+              <ChevronLeft size={18} className="text-forest shrink-0" />
+              <div className="min-w-0">
+                <span className="block text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  Previous · Day {prevDay.dayNumber}
+                </span>
+                <span className="block font-serif text-lg font-semibold text-ink truncate">
+                  {prevDay.title}
+                </span>
+              </div>
             </Link>
           ) : (
             <div />
@@ -255,15 +217,22 @@ export default async function DayDetailPage({ params }: DayPageProps) {
           {nextDay ? (
             <Link
               href={`/day/${nextDay.date}`}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-light py-2"
+              className="tap-row bg-white rounded-2xl p-4 border border-line/90 hover:border-forest/35 shadow-sm flex items-center justify-end gap-3 text-right transition-colors"
             >
-              <span>Day {nextDay.dayNumber} ({nextDay.date.slice(5)})</span>
-              <ChevronRight size={16} />
+              <div className="min-w-0">
+                <span className="block text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  Next · Day {nextDay.dayNumber}
+                </span>
+                <span className="block font-serif text-lg font-semibold text-ink truncate">
+                  {nextDay.title}
+                </span>
+              </div>
+              <ChevronRight size={18} className="text-forest shrink-0" />
             </Link>
           ) : (
             <div />
           )}
-        </div>
+        </nav>
       </div>
     </div>
   );
