@@ -3,22 +3,24 @@ import { notFound } from "next/navigation";
 import { places } from "@/content/places";
 import { sources } from "@/content/sources";
 import { mediaRecords } from "@/content/media";
-import { getGoogleMapsUrl, getAppleMapsUrl } from "@/lib/navigation";
+import { getAppleMapsUrl, getGoogleMapsUrl } from "@/lib/navigation";
+import { formatPlaceTag, isRavanaPlace } from "@/lib/tags";
+import { HeroFrame } from "@/components/common/HeroFrame";
 import { Badge } from "@/components/common/Badge";
-import { PlaceImage } from "@/components/common/PlaceImage";
 import { SaveButton } from "@/components/place/SaveButton";
 import {
-  MapPin,
-  Clock,
-  Navigation,
+  BookOpen,
+  Camera,
+  CheckCircle,
   ChevronLeft,
-  Sparkles,
-  ShieldAlert,
-  Shirt,
+  Clock,
   Compass,
   ExternalLink,
-  BookOpen,
-  CheckCircle,
+  Navigation,
+  ShieldAlert,
+  Shirt,
+  Sparkles,
+  Ticket,
 } from "lucide-react";
 
 export function generateStaticParams() {
@@ -39,278 +41,343 @@ export default async function PlaceDetailPage({ params }: PlacePageProps) {
     notFound();
   }
 
-  const heroMedia = place.heroMediaId
-    ? mediaRecords[place.heroMediaId]
-    : null;
-
-  const isRavanaTrail =
-    place.tags.includes("Ravana Trail") ||
-    place.tags.includes("RAMAYANA_TRADITION");
-
-  // Map source IDs to source records
+  const heroMedia = place.heroMediaId ? mediaRecords[place.heroMediaId] : null;
+  const isRavanaTrail = isRavanaPlace(place.tags);
   const relevantSources = sources.filter((s) => place.sourceIds.includes(s.id));
+  const googleMapsUrl = getGoogleMapsUrl(place.mapQuery, place.latitude, place.longitude);
+  const appleMapsUrl = getAppleMapsUrl(place.mapQuery, place.latitude, place.longitude);
 
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Top Bar with back link */}
-      <header className="sticky top-0 z-40 bg-ivory/95 backdrop-blur-md border-b border-line/60 px-4 py-3">
-        <div className="max-w-md mx-auto flex items-center justify-between">
+    <div className="bg-ivory">
+      {/* Mobile-only context bar */}
+      <header className="md:hidden sticky top-0 z-40 bg-ivory/95 backdrop-blur-md border-b border-line/70 px-4 py-2.5">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
           <Link
             href="/explore"
-            className="flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-light"
+            className="tap-row inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-deep"
           >
             <ChevronLeft size={16} />
             <span>Explore All</span>
           </Link>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
             Destination Guide
           </span>
         </div>
       </header>
 
-      {/* Hero Media */}
-      <div className="relative aspect-[4/3] w-full bg-forest-deep">
-        <PlaceImage
+      <div className="app-container pt-4 pb-10 md:py-8 space-y-6 md:space-y-8 animate-fade-rise">
+        {/* Desktop Breadcrumb */}
+        <nav
+          aria-label="Breadcrumb"
+          className="hidden md:flex items-center justify-between text-xs text-muted"
+        >
+          <div className="flex items-center gap-2">
+            <Link href="/explore" className="hover:text-forest font-medium transition-colors">
+              Explore Destinations
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span>{place.region}</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-ink font-semibold">{place.title}</span>
+          </div>
+          <Link
+            href="/map"
+            className="inline-flex items-center gap-1 font-semibold text-forest hover:underline"
+          >
+            <span>Open Route Directory</span>
+          </Link>
+        </nav>
+
+        {/* Split Editorial Hero */}
+        <HeroFrame
+          variant="split"
           media={heroMedia}
           fallbackTitle={place.title}
-          priority
-          sizes="(max-width: 480px) 100vw, 600px"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/40 to-transparent" />
-
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          {place.tags.map((t) => (
+          eyebrow={place.region}
+          title={place.title}
+          subtitle={place.subtitle}
+          showCredit={false}
+          badges={place.tags.slice(0, 4).map((tag) => (
             <span
-              key={t}
-              className="px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold"
+              key={tag}
+              className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/14 border border-white/20 text-[11px] font-medium text-white whitespace-nowrap"
             >
-              {t}
+              {formatPlaceTag(tag)}
             </span>
           ))}
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white space-y-1.5">
-          <p className="text-xs text-antique-gold font-bold uppercase tracking-wider flex items-center gap-1">
-            <MapPin size={12} />
-            <span>{place.region}</span>
-          </p>
-          <h1 className="text-2xl font-serif font-bold text-white leading-tight">
-            {place.title}
-          </h1>
-          <p className="text-xs text-ivory/90 leading-relaxed font-medium">
-            {place.subtitle}
-          </p>
-        </div>
-      </div>
-
-      {/* Photo credit strip */}
-      <div className="bg-sage/40 px-4 py-1.5 text-[10px] text-muted flex items-center justify-between border-b border-line/60">
-        {heroMedia ? (
-          <>
-            <span>Photo: {heroMedia.credit}</span>
-            {heroMedia.creditUrl ? (
+          actions={
+            <>
               <a
-                href={heroMedia.creditUrl}
+                href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-forest font-medium underline hover:text-forest-light"
+                className="tap-row inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-forest text-xs font-semibold shadow-sm hover:bg-sage transition-colors"
               >
-                {heroMedia.license}
+                <Navigation size={14} />
+                <span>Google Maps</span>
               </a>
-            ) : (
-              <span className="text-forest font-medium">{heroMedia.license}</span>
-            )}
-          </>
-        ) : (
-          <>
-            <span>Editorial illustration placeholder</span>
-            <span className="text-forest font-medium">Licensed photo pending</span>
-          </>
-        )}
-      </div>
+              <a
+                href={appleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tap-row inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/12 text-white border border-white/25 text-xs font-semibold hover:bg-white/20 transition-colors"
+              >
+                <span>Apple Maps</span>
+                <ExternalLink size={12} />
+              </a>
+              <SaveButton placeId={place.id} />
+            </>
+          }
+        />
 
-      <div className="mobile-container py-5 space-y-6">
-        {/* Quick Action Navigation Bar */}
-        <div className="flex items-center gap-2">
-          <a
-            href={getGoogleMapsUrl(place.mapQuery, place.latitude, place.longitude)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-forest text-white text-xs font-semibold shadow-sm hover:bg-forest-light transition-colors"
-          >
-            <Navigation size={14} />
-            <span>Open Directions</span>
-          </a>
-
-          <SaveButton placeId={place.id} />
-        </div>
-
-        {/* Ravana Trail Thematic Banner */}
-        {isRavanaTrail && (
-          <div className="bg-gradient-to-r from-[#F7EAD7] to-[#F2E0C4] p-4 rounded-card border border-[#E8D0B1] text-[#6D4813] space-y-1.5 shadow-sm">
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#7A4B13]">
-              <Sparkles size={14} className="text-antique-gold" />
-              <span>Part of the Ravana Trail</span>
-            </div>
-            <p className="text-xs text-[#5C3C0E] leading-relaxed">
-              This site features in the traditional Ramayana lore of Sri Lanka. We present its sacred associations as living cultural tradition.
-            </p>
-          </div>
-        )}
-
-        {/* Quick Read Summary */}
-        <section className="bg-white rounded-card p-5 border border-line shadow-card space-y-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
-            Overview
-          </span>
-          <p className="text-xs text-ink leading-relaxed font-normal">
-            {place.shortIntro}
-          </p>
-          <p className="text-xs text-ink/80 leading-relaxed pt-1">
-            {place.overview}
-          </p>
-        </section>
-
-        {/* Highlights: What to look for */}
-        {place.highlights.length > 0 && (
-          <section className="bg-white rounded-card p-5 border border-line shadow-card space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
-              <Compass size={14} />
-              <span>What to Look For</span>
-            </h2>
-            <div className="space-y-2">
-              {place.highlights.map((hl, i) => (
-                <div key={i} className="flex items-start gap-2.5 text-xs text-ink/85">
-                  <CheckCircle size={14} className="text-forest mt-0.5 shrink-0" />
-                  <span>{hl}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Detailed Stories & Traditions */}
-        {place.stories.length > 0 && (
-          <section className="space-y-3">
-            <div className="flex items-center justify-between px-1">
-              <h2 className="text-sm font-bold text-ink tracking-tight flex items-center gap-1.5">
-                <BookOpen size={16} className="text-forest" />
-                <span>Stories & Heritage</span>
-              </h2>
-              <span className="text-[11px] text-muted">Documented & Traditional</span>
-            </div>
-
-            <div className="space-y-3">
-              {place.stories.map((story, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-card p-4 border border-line shadow-card space-y-2"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-xs font-bold text-ink">
-                      {story.title}
-                    </h3>
-                    <Badge type={story.classification} />
-                  </div>
-                  <p className="text-xs text-ink/80 leading-relaxed">
-                    {story.short}
-                  </p>
-                  {story.full && (
-                    <p className="text-xs text-ink/75 leading-relaxed pt-1">
-                      {story.full}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Practical Tips: Attire & Safety */}
-        <section className="bg-white rounded-card p-5 border border-line shadow-card space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-forest">
-            Before You Go
-          </h2>
-
-          {place.attireAndEtiquette && place.attireAndEtiquette.length > 0 && (
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
-                <Shirt size={14} className="text-forest" />
-                <span>Attire & Temple Etiquette</span>
-              </div>
-              <ul className="text-xs text-ink/80 space-y-1 pl-5 list-disc leading-relaxed">
-                {place.attireAndEtiquette.map((att, i) => (
-                  <li key={i}>{att}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {place.mobilityNotes && (
-            <div className="space-y-1 pt-2 border-t border-line/60">
-              <span className="text-xs font-semibold text-ink">
-                Walking & Mobility
+        {/* Photo Attribution & License Strip */}
+        <div className="rounded-xl bg-sage/55 px-4 py-2.5 border border-line/80 text-xs text-muted flex flex-wrap items-center justify-between gap-2">
+          {heroMedia ? (
+            <>
+              <span className="inline-flex items-center gap-1.5">
+                <Camera size={13} className="text-forest shrink-0" />
+                <span>Photo: {heroMedia.credit}</span>
               </span>
-              <p className="text-xs text-ink/80 leading-relaxed">
-                {place.mobilityNotes}
-              </p>
-            </div>
+              {heroMedia.creditUrl ? (
+                <a
+                  href={heroMedia.creditUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-forest font-semibold underline hover:text-forest-deep"
+                >
+                  {heroMedia.license}
+                </a>
+              ) : (
+                <span className="text-forest font-semibold">{heroMedia.license}</span>
+              )}
+            </>
+          ) : (
+            <>
+              <span className="inline-flex items-center gap-1.5">
+                <Camera size={13} className="text-forest shrink-0" />
+                <span>Editorial illustration placeholder</span>
+              </span>
+              <span className="text-forest font-semibold">Licensed photo pending</span>
+            </>
           )}
+        </div>
 
-          {place.safetyNotes && place.safetyNotes.length > 0 && (
-            <div className="space-y-1.5 pt-2 border-t border-line/60">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-warning-text">
-                <ShieldAlert size={14} className="text-antique-gold" />
-                <span>Safety & Precautions</span>
-              </div>
-              <ul className="text-xs text-warning-text/90 space-y-1 pl-5 list-disc leading-relaxed">
-                {place.safetyNotes.map((sn, i) => (
-                  <li key={i}>{sn}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
-
-        {/* Verified Sources & Last Checked */}
-        <section className="bg-sage/30 rounded-card p-4 border border-line/80 space-y-2 text-xs">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
-            Verified Source Authorities
-          </span>
-          <p className="text-[11px] text-muted leading-relaxed">
-            All factual claims regarding archaeology, locations, and cultural traditions are grounded in official documentation:
-          </p>
-
-          <div className="space-y-1.5 pt-1">
-            {relevantSources.map((source) => (
-              <a
-                key={source.id}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-2 rounded-lg bg-white border border-line/80 text-forest font-medium hover:bg-sage/40 transition-colors"
-              >
-                <div className="min-w-0 pr-2">
-                  <p className="text-xs truncate font-semibold">{source.title}</p>
-                  <p className="text-[10px] text-muted truncate">{source.publisher}</p>
+        {/* Two-Column Editorial Reading & Practical Guide */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          {/* Primary Reading Column */}
+          <div className="lg:col-span-8 space-y-6">
+            {isRavanaTrail && (
+              <div className="bg-gradient-to-r from-[#F9EFE0] to-[#F4E4C8] p-5 rounded-card border border-[#E8D0B1] text-[#6D4813] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-antique-gold-dark">
+                    <Sparkles size={14} className="text-antique-gold" />
+                    <span>Part of the Ravana Trail</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#5C3C0E] leading-relaxed">
+                    This site belongs to Sri Lanka&apos;s living Ramayana pilgrimage tradition. Historical archaeology and traditional lore are labeled separately below.
+                  </p>
                 </div>
-                <ExternalLink size={13} className="shrink-0 text-muted" />
-              </a>
-            ))}
+                <Link
+                  href="/ravana-trail"
+                  className="tap-row shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/90 text-antique-gold-dark border border-[#E8D0B1] text-xs font-semibold hover:bg-white transition-colors"
+                >
+                  <span>Full Trail Guide</span>
+                </Link>
+              </div>
+            )}
+
+            {/* Overview */}
+            <section className="bg-white rounded-card p-6 border border-line/90 shadow-card space-y-3">
+              <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-antique-gold-dark">
+                Overview &amp; Sense of Place
+              </span>
+              <div className="reading-container mx-0 space-y-3 text-[15px] leading-relaxed text-ink/90">
+                <p className="font-medium text-ink">{place.shortIntro}</p>
+                <p className="text-ink/80">{place.overview}</p>
+              </div>
+            </section>
+
+            {/* Highlights */}
+            {place.highlights.length > 0 && (
+              <section className="bg-white rounded-card p-6 border border-line/90 shadow-card space-y-4">
+                <h2 className="font-serif text-2xl font-semibold text-ink flex items-center gap-2">
+                  <Compass size={20} className="text-forest" />
+                  <span>What to Look For</span>
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {place.highlights.map((hl, i) => (
+                    <div
+                      key={i}
+                      className="p-3.5 rounded-xl bg-mist/55 border border-line/70 flex items-start gap-2.5 text-xs sm:text-[13px] text-ink/90 leading-relaxed"
+                    >
+                      <CheckCircle size={15} className="text-forest mt-0.5 shrink-0" />
+                      <span>{hl}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Stories & Heritage */}
+            {place.stories.length > 0 && (
+              <section className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+                  <h2 className="font-serif text-2xl sm:text-[28px] font-semibold text-ink flex items-center gap-2">
+                    <BookOpen size={20} className="text-forest" />
+                    <span>Stories &amp; Heritage</span>
+                  </h2>
+                  <span className="text-xs text-muted">
+                    History vs. tradition clearly labeled
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  {place.stories.map((story, i) => (
+                    <article
+                      key={i}
+                      className="bg-white rounded-card p-5 sm:p-6 border border-line/90 shadow-card space-y-3"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <h3 className="font-serif text-xl font-semibold text-ink leading-snug">
+                          {story.title}
+                        </h3>
+                        <Badge type={story.classification} />
+                      </div>
+                      <p className="text-sm text-ink/90 leading-relaxed">{story.short}</p>
+                      {story.full && (
+                        <p className="text-sm text-muted leading-relaxed pt-1 border-t border-line/50">
+                          {story.full}
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
-          <p className="text-[10px] text-muted pt-1">
-            Last verified: {place.lastReviewedAt || "2026-11-23"} · Real-time operational hours to confirm locally.
-          </p>
-        </section>
+          {/* Practical Sidebar */}
+          <aside className="lg:col-span-4 space-y-5">
+            {/* Operational Transparency Card */}
+            <section className="bg-white rounded-card p-5 border border-line/90 shadow-card space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-forest">
+                  Visitor Status
+                </h2>
+                <Badge
+                  type={
+                    place.operationalInfoStatus === "verified" ? "verified" : "check-again"
+                  }
+                />
+              </div>
 
-        {/* Return to Explore */}
-        <div className="pt-2 pb-6">
+              <div className="space-y-3 text-xs">
+                <div className="flex items-start gap-2.5">
+                  <Clock size={15} className="text-forest mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-semibold text-ink">Hours</p>
+                    <p className="text-muted mt-0.5 leading-relaxed">
+                      {place.openHours || "To confirm locally with your accompanying host."}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5 pt-2.5 border-t border-line/60">
+                  <Ticket size={15} className="text-forest mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-semibold text-ink">Entry &amp; Tickets</p>
+                    <p className="text-muted mt-0.5 leading-relaxed">
+                      {place.ticketPrice || "Fee schedules checked at official ticket counters on arrival."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Attire, Mobility & Safety */}
+            <section className="bg-white rounded-card p-5 border border-line/90 shadow-card space-y-4">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-forest">
+                Before You Go
+              </h2>
+
+              {place.attireAndEtiquette && place.attireAndEtiquette.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+                    <Shirt size={14} className="text-forest" />
+                    <span>Attire &amp; Temple Etiquette</span>
+                  </div>
+                  <ul className="text-xs text-ink/85 space-y-1.5 pl-4 list-disc leading-relaxed">
+                    {place.attireAndEtiquette.map((att, i) => (
+                      <li key={i}>{att}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {place.mobilityNotes && (
+                <div className="space-y-1.5 pt-3 border-t border-line/65">
+                  <p className="text-xs font-semibold text-ink">Walking &amp; Mobility</p>
+                  <p className="text-xs text-ink/80 leading-relaxed">{place.mobilityNotes}</p>
+                </div>
+              )}
+
+              {place.safetyNotes && place.safetyNotes.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-line/65">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-warning-text">
+                    <ShieldAlert size={14} className="text-antique-gold-dark" />
+                    <span>Safety &amp; Precautions</span>
+                  </div>
+                  <ul className="text-xs text-warning-text space-y-1.5 pl-4 list-disc leading-relaxed">
+                    {place.safetyNotes.map((sn, i) => (
+                      <li key={i}>{sn}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+
+            {/* Verified Sources */}
+            <section className="bg-sage/45 rounded-card p-5 border border-line/80 space-y-3 text-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
+                Verified Source Authorities
+              </span>
+              <p className="text-xs text-muted leading-relaxed">
+                Historical, site location, and Ramayana tradition details draw strictly on these documented references:
+              </p>
+
+              <div className="space-y-2">
+                {relevantSources.map((source) => (
+                  <a
+                    key={source.id}
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tap-row flex items-center justify-between gap-2 p-3 rounded-xl bg-white border border-line/85 text-forest hover:bg-sage-light transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs truncate font-semibold">{source.title}</p>
+                      <p className="text-[11px] text-muted truncate mt-0.5">
+                        {source.publisher}
+                      </p>
+                    </div>
+                    <ExternalLink size={14} className="shrink-0 text-muted" />
+                  </a>
+                ))}
+              </div>
+
+              <p className="text-[11px] text-muted pt-1">
+                Last reviewed: {place.lastReviewedAt || "2026-11-23"}
+              </p>
+            </section>
+          </aside>
+        </div>
+
+        {/* Return CTA */}
+        <div className="pt-2">
           <Link
             href="/explore"
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-sage text-forest text-xs font-semibold border border-line hover:bg-white transition-colors"
+            className="tap-row inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-line text-forest text-xs font-semibold hover:bg-sage-light transition-colors shadow-sm"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={15} />
             <span>Back to All Destinations</span>
           </Link>
         </div>
